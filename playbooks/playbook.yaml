@@ -1,0 +1,41 @@
+---
+- name: Playbook
+  hosts: app
+  become: true
+  roles:
+    - docker
+  tasks:
+    - name: Ensure apt package list is updated
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Copy application files (and Dockerfile) to remote host
+      ansible.builtin.copy:
+        src: ./app/
+        dest: /app
+        remote_src: no
+
+    - name: Build Docker image from Dockerfile
+      become: true
+      community.docker.docker_image:
+        name: app
+        source: build
+        build:
+          path: /app
+
+    - name: Run image
+      community.docker.docker_container:
+        name: app
+        image: app
+        state: started
+        ports:
+          - "8080:8080"
+
+- name: Deploy monitoring (Prometheus, Loki, Grafana)
+  hosts: monitoring
+  become: true
+  roles:
+    - prometheus
+    - loki
+    - grafana

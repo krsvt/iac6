@@ -1,0 +1,113 @@
+---
+- name: Add Aliyun's mirror Grafana APT repository
+  apt_repository:
+    repo: "deb [trusted=yes] https://mirrors.aliyun.com/grafana/apt stable main"
+    state: present
+    filename: grafana
+    update_cache: yes
+  become: true
+
+- name: Update APT package index
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  become: true
+
+- name: Install Grafana
+  apt:
+    name: grafana
+    state: latest
+  become: true
+
+- name: Ensure Grafana configuration directory exists
+  file:
+    path: /etc/grafana
+    state: directory
+    owner: grafana
+    group: grafana
+    mode: "0755"
+  become: true
+
+- name: Deploy grafana.ini config file
+  template:
+    src: grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+    owner: grafana
+    group: grafana
+    mode: "0644"
+  become: true
+  notify: Restart Grafana
+
+- name: Ensure Grafana is running
+  service:
+    name: grafana-server
+    state: started
+    enabled: yes
+  become: true
+
+- name: Ensure Grafana dashboards directory exists
+  file:
+    path: /etc/grafana/provisioning/dashboards
+    state: directory
+    owner: grafana
+    group: grafana
+    mode: "0755"
+  become: true
+
+- name: Ensure Grafana datasources directory exists
+  file:
+    path: /etc/grafana/provisioning/datasources/
+    state: directory
+    owner: grafana
+    group: grafana
+    mode: "0755"
+  become: true
+
+- name: Copy Grafana provisioning
+  ansible.builtin.copy:
+    src: "files/provisioning/"
+    dest: "/etc/grafana/provisioning"
+    owner: "root"
+    group: "grafana"
+    mode: "0755"
+  become: true
+  notify: Restart Grafana
+#
+- name: Deploy Grafana datasource configuration
+  template:
+    src: grafana-datasource.yaml.j2
+    dest: /etc/grafana/provisioning/datasources/datasource.yaml
+    owner: grafana
+    group: grafana
+    mode: "0755"
+  become: true
+  notify: Restart Grafana
+#
+# - name: Deploy Grafana dashboard configuration
+#   template:
+#     src: grafana-dashboard.yaml.j2
+#     dest: /etc/grafana/provisioning/dashboards/dashboard.yaml
+#     owner: grafana
+#     group: grafana
+#     mode: "0755"
+#   become: true
+#   notify: Restart Grafana
+# - name: Deploy Loki default dashboard
+#   copy:
+#     src: files/dashboards/loki-overview.json
+#     dest: /var/lib/grafana/dashboards/loki-overview.json
+#     owner: grafana
+#     group: grafana
+#     mode: "0755"
+#   become: true
+#   notify: Restart Grafana
+#
+# - name: Deploy Prometheus enhanced dashboard
+#   copy:
+#     src: files/dashboards/prometheus-overview.json
+#     dest: /var/lib/grafana/dashboards/prometheus-overview.json
+#     owner: grafana
+#     group: grafana
+#     mode: "0755"
+#   become: true
+#   notify: Restart Grafana

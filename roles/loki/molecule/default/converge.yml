@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include iac.loki"
+      include_role:
+        name: "iac.loki"

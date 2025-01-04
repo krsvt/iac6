@@ -1,0 +1,42 @@
+---
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+
+platforms:
+  - name: srv1
+    box: ubuntu/focal64
+    groups:
+      - app
+  - name: srv2
+    box: ubuntu/focal64
+    groups:
+      - monitoring
+
+provisioner:
+  name: ansible
+  inventory:
+    hosts:
+      all:
+        hosts:
+          srv1:
+            ansible_host: "192.168.56.201"
+            ansible_user: vagrant
+            ansible_ssh_private_key_file: "/home/svt/dev/itmo/iac/iac6/.vagrant/machines/srv1/virtualbox/private_key"
+          srv2:
+            ansible_host: 100.117.57.214
+            ansible_user: vagrant
+            ansible_ssh_private_key_file: "/home/svt/dev/itmo/iac/iac6/.vagrant/machines/srv2/virtualbox/private_key"
+
+scenario:
+  name: default
+  test_sequence:
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - destroy

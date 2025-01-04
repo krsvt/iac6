@@ -1,0 +1,7 @@
+Loki Role 
+=========
+
+License
+-------
+
+MIT

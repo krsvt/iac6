@@ -1,0 +1,15 @@
+---
+grafana_http_port: 3000
+grafana_root_url: http://localhost:3000
+grafana_disable_sign_up: true
+grafana_auth_anonymous: false
+grafana_admin_user: admin
+grafana_admin_password: admin
+
+grafana_dashboard_provider_name: Default Dashboard Provider
+grafana_dashboard_update_interval: 30
+grafana_dashboard_path: /var/lib/grafana/dashboards
+
+grafana_loki_url: http://localhost:3100
+
+grafana_prometheus_url: http://localhost:9090

@@ -1,0 +1,6 @@
+galaxy_info:
+  role_name: grafana
+  author: Svyatoslav
+  description: A role to configure grafana
+  license: MIT
+  min_ansible_version: "2.9"

@@ -1,0 +1,3 @@
+---
+# vars file for loki
+_loki__apt_keypath: /usr/share/keyrings/grafana.asc

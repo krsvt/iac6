@@ -1,0 +1,55 @@
+---
+# tasks file for loki
+- name: Update apt cache
+  become: true
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install deps
+  become: true
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+
+- name: Add Loki apt key
+  become: true
+  get_url:
+    url: "{{ loki_apt_key_url }}"
+    dest: "{{ loki_apt_keypath }}"
+    mode: "0644"
+    force: true
+  changed_when: false
+
+- name: Add Loki repo
+  become: true
+  apt_repository:
+    repo: "{{ loki_apt_repo }}"
+    state: present
+    update_cache: true
+
+- name: Install Loki
+  become: true
+  apt:
+    name: loki
+    state: present
+
+- name: Start Loki
+  become: true
+  service:
+    name: loki
+    state: started
+    enabled: true
+
+- name: Create Loki config
+  become: true
+  template:
+    src: "{{ loki_template_config_path }}"
+    dest: "/etc/loki/config.yml"
+    owner: prometheus
+    group: prometheus
+    mode: "0644"
+  notify: Restart Loki

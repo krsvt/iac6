@@ -1,0 +1,7 @@
+---
+prometheus_template_config_path: templates/prometheus.yml.j2
+prometheus_config_path: /etc/prometheus/prometheus.yml
+
+prometheus_job_name: app
+prometheus_target: 192.168.56.201:8080
+prometheus_metrics_path: /metrics

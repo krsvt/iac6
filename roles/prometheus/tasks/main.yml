@@ -1,0 +1,29 @@
+---
+- name: Update APT package index
+  become: true
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install Prometheus
+  become: true
+  apt:
+    name: prometheus
+    state: present
+
+- name: Ensure Prometheus service is running
+  service:
+    name: prometheus
+    state: started
+    enabled: true
+  become: true
+
+- name: Create Prometheus config file
+  become: true
+  template:
+    src: "{{ prometheus_template_config_path }}"
+    dest: "{{ prometheus_config_path }}"
+    owner: prometheus
+    group: prometheus
+    mode: "0644"
+  notify: Restart Prometheus

@@ -1,0 +1,13 @@
+---
+loki_apt_repo_url: https://mirror.yandex.ru/mirrors/packages.grafana.com/oss/deb
+loki_apt_key_url: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xb53ae77badb630a683046005963fa27710458545
+loki_apt_keypath: /usr/share/keyrings/grafana.asc
+loki_apt_repo: "deb [signed-by={{ loki_apt_keypath }}] {{ loki_apt_repo_url }} stable main"
+
+loki_template_config_path: templates/loki.yml.j2
+
+loki_http_port: 3100
+loki_grpc_port: 9096
+# loki_alertmanager_url: http://localhost:9093
+#
+#
