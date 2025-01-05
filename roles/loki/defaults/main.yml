@@ -9,5 +9,3 @@ loki_template_config_path: templates/loki.yml.j2
 loki_http_port: 3100
 loki_grpc_port: 9096
 # loki_alertmanager_url: http://localhost:9093
-#
-#

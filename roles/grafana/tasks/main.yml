@@ -1,11 +1,17 @@
 ---
-- name: Add Aliyun's mirror Grafana APT repository
+- name: Download Grafana APT key
+  get_url:
+    url: "{{ grafana_apt_key }}"
+    dest: "{{ grafana_apt_keypath }}"
+    mode: "0644"
+    force: true
+  changed_when: false
+
+- name: Add Grafana APT repository
   apt_repository:
-    repo: "deb [trusted=yes] https://mirrors.aliyun.com/grafana/apt stable main"
+    repo: "{{ grafana_apt_repo_url }}"
     state: present
-    filename: grafana
-    update_cache: yes
-  become: true
+    update_cache: true
 
 - name: Update APT package index
   apt:
@@ -54,6 +60,15 @@
     mode: "0755"
   become: true
 
+- name: Ensure Grafana dashboards directory exists
+  file:
+    path: "{{ grafana_dashboard_path }}"
+    state: directory
+    owner: grafana
+    group: grafana
+    mode: "0755"
+  become: true
+
 - name: Ensure Grafana datasources directory exists
   file:
     path: /etc/grafana/provisioning/datasources/
@@ -63,16 +78,6 @@
     mode: "0755"
   become: true
 
-- name: Copy Grafana provisioning
-  ansible.builtin.copy:
-    src: "files/provisioning/"
-    dest: "/etc/grafana/provisioning"
-    owner: "root"
-    group: "grafana"
-    mode: "0755"
-  become: true
-  notify: Restart Grafana
-#
 - name: Deploy Grafana datasource configuration
   template:
     src: grafana-datasource.yaml.j2
@@ -82,32 +87,23 @@
     mode: "0755"
   become: true
   notify: Restart Grafana
-#
-# - name: Deploy Grafana dashboard configuration
-#   template:
-#     src: grafana-dashboard.yaml.j2
-#     dest: /etc/grafana/provisioning/dashboards/dashboard.yaml
-#     owner: grafana
-#     group: grafana
-#     mode: "0755"
-#   become: true
-#   notify: Restart Grafana
-# - name: Deploy Loki default dashboard
-#   copy:
-#     src: files/dashboards/loki-overview.json
-#     dest: /var/lib/grafana/dashboards/loki-overview.json
-#     owner: grafana
-#     group: grafana
-#     mode: "0755"
-#   become: true
-#   notify: Restart Grafana
-#
-# - name: Deploy Prometheus enhanced dashboard
-#   copy:
-#     src: files/dashboards/prometheus-overview.json
-#     dest: /var/lib/grafana/dashboards/prometheus-overview.json
-#     owner: grafana
-#     group: grafana
-#     mode: "0755"
-#   become: true
-#   notify: Restart Grafana
+
+- name: Deploy Grafana dashboard configuration
+  template:
+    src: grafana-dashboard.yaml.j2
+    dest: /etc/grafana/provisioning/dashboards/dashboard.yaml
+    owner: grafana
+    group: grafana
+    mode: "0755"
+  become: true
+  notify: Restart Grafana
+
+- name: Deploy Prometheus default dashboard
+  copy:
+    src: "{{ grafana_example_dashboard_host_path }}"
+    dest: "{{ grafana_example_dashboard_path }}"
+    owner: grafana
+    group: grafana
+    mode: "0755"
+  become: true
+  notify: Restart Grafana
