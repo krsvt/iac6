@@ -1,0 +1,59 @@
+- name: Ensure Alertmanager is installed
+  apt:
+    name: prometheus-alertmanager
+    state: present
+  become: true
+
+- name: Ensure Alertmanager configuration directory exists
+  file:
+    path: "{{ alertmanager_config_file | dirname }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: "0755"
+
+- name: Deploy Alertmanager configuration
+  template:
+    src: alertmanager.yml.j2
+    dest: "{{ alertmanager_config_file }}"
+    owner: prometheus
+    group: prometheus
+    mode: "0644"
+  become: true
+  notify: Restart Alertmanager
+
+- name: Ensure Alertmanager service is enabled and running
+  systemd:
+    name: prometheus-alertmanager
+    state: started
+    enabled: true
+
+- name: Ensure Prometheus rules directory exists
+  file:
+    path: /etc/prometheus/rules
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: "0755"
+  become: true
+
+- name: Deploy Prometheus alert rules file
+  copy:
+    src: files/alert.rules.yml
+    dest: /etc/prometheus/rules/alert.rules.yml
+    owner: prometheus
+    group: prometheus
+    mode: "0644"
+  become: true
+  notify: Restart Prometheus
+
+- name: Ensure Prometheus main configuration includes alert rules
+  blockinfile:
+    path: /etc/prometheus/prometheus.yml
+    marker: "# {mark} PROMETHEUS ALERT RULES"
+    insertbefore: "^scrape_configs:"
+    block: |
+      rule_files:
+        - "/etc/prometheus/rules/alert.rules.yml"
+  become: true
+  notify: Restart Prometheus

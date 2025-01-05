@@ -27,3 +27,7 @@
     group: prometheus
     mode: "0644"
   notify: Restart Prometheus
+
+- name: Include alert tasks
+  include_tasks: "alert.yml"
+  when: alertmanager_enabled | bool

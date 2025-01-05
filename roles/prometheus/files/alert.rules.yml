@@ -1,0 +1,11 @@
+groups:
+  - name: TestGroup
+    rules:
+      - alert: TestEmailNotification
+        expr: vector(1) == 1
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Test Email Alert"
+          description: "This is a test alert."

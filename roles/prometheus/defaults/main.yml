@@ -5,3 +5,14 @@ prometheus_config_path: /etc/prometheus/prometheus.yml
 prometheus_job_name: app
 prometheus_target: 192.168.56.201:8080
 prometheus_metrics_path: /metrics
+
+alertmanager_enabled: true
+
+alertmanager_config_file: /etc/prometheus/alertmanager.yml
+
+alertmanager_email_smtp_smarthost: "connect.smtp.bz:587"
+alertmanager_email_from: "info@mycompany.com"
+alertmanager_email_smtp_auth_username: "info@mycompany.com"
+alertmanager_email_smtp_auth_password: "thepassword"
+alertmanager_email_smtp_require_tls: true
+alertmanager_email_to: "test@example.com"

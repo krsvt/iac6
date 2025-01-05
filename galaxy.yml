@@ -6,7 +6,7 @@
 namespace: iac
 
 # The name of the collection. Has the same character restrictions as 'namespace'
-name: lab4
+name: lab6
 version: 1.0.0
 readme: README.md
 authors:
@@ -18,11 +18,11 @@ license_file: ""
 tags: []
 dependencies: {}
 # The URL of the originating SCM repository
-repository: https://github.com/krsvt/iac4
+repository: https://github.com/krsvt/iac6
 # The URL to any online docs
-documentation: https://github.com/krsvt/iac4
+documentation: https://github.com/krsvt/iac6
 # The URL to the homepage of the collection/project
-homepage: https://github.com/krsvt/iac4
+homepage: https://github.com/krsvt/iac6
 # The URL to the collection issue tracker
-issues: https://github.com/krsvt/iac4
+issues: https://github.com/krsvt/iac6
 build_ignore: []

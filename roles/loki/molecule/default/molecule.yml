@@ -1,19 +1,39 @@
 ---
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+
 dependency:
   name: galaxy
-driver:
-  name: docker
+
 platforms:
-  - name: instance
-    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2204}-ansible:latest"
-    command: ${MOLECULE_DOCKER_COMMAND:-""}
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    cgroupns_mode: host
-    privileged: true
-    pre_build_image: true
+  - name: srv1
+    box: ubuntu/focal64
+    groups:
+      - app
+
+  - name: srv2
+    box: ubuntu/focal64
+    groups:
+      - monitoring
 
 provisioner:
   name: ansible
+  inventory:
+    hosts:
+      all:
+        hosts:
+          srv1:
+            ansible_host: "192.168.56.201"
+            ansible_user: "vagrant"
+            ansible_ssh_private_key_file: "/home/svt/dev/itmo/iac/iac6/.vagrant/machines/srv1/virtualbox/private_key"
+          srv2:
+            ansible_host: "192.168.56.202"
+            ansible_user: "vagrant"
+            ansible_ssh_private_key_file: "/home/svt/dev/itmo/iac/iac6/.vagrant/machines/srv2/virtualbox/private_key"
+  env:
+    ANSIBLE_ROLES_PATH: "../../../roles"
+
 verifier:
   name: ansible

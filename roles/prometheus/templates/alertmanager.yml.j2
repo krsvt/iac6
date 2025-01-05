@@ -1,0 +1,22 @@
+global:
+  resolve_timeout: 1m
+  smtp_smarthost: '{{ alertmanager_email_smtp_smarthost }}'
+  smtp_from: '{{ alertmanager_email_from }}'
+  smtp_auth_username: '{{ alertmanager_email_smtp_auth_username }}'
+  smtp_auth_password: '{{ alertmanager_email_smtp_auth_password }}'
+  smtp_require_tls: {{ alertmanager_email_smtp_require_tls }}
+
+route:
+  receiver: 'email-notifications'
+
+receivers:
+  - name: 'email-notifications'
+    email_configs:
+      - to: '{{ alert_email_to }}'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']
