@@ -7,4 +7,5 @@
 ```
 ansible-playbook playbooks/playbook.yaml -i inventory.ini
 ```
-
+## Grafana
+![image](https://github.com/user-attachments/assets/b7b2795b-ff39-4a03-8695-19f461023392)
